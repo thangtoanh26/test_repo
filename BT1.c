@@ -1,44 +1,32 @@
-/*
-######################################### 
-# University of Information Technology  # 
-# IT007 Operating System                #
-# To Anh Thang - 24521613               # 
-# File: sjf.c                           # 
-#########################################
-*/ 
-
 #include <stdio.h>
-#include <vector>
-#include <iomanip>
-#include <climits>
-#include <cstring>
 
 struct Process {
     char name[20];
     int arrival_time;
     int burst_time;
-    int completion_time;
-    int turnaround_time;
-    int waiting_time;
     int response_time;
+    int waiting_time;
+    int turnaround_time;
     int is_completed;
 };
-
-void Nhap(vector<Process>& processes) {
-    for (size_t i = 0; i < processes.size(); i++) {
-        scanf("Nhap ten process %d: %s", i + 1, processes[i].name);
-        scanf("Nhap arrival time: %d", &processes[i].arrival_time);
-        scanf("Nhap burst time: %d", &processes[i].burst_time);
-    }
-}
 
 int main() {
     int n;
     printf("Nhap so luong process: ");
     scanf("%d", &n);
+    printf("--------------\n");
 
-    vector<Process> p(n);
-    Nhap(p);
+    struct Process p[100];
+    for (int i = 0; i < n; i++) {
+        printf("Nhap ten process %d: ", i + 1);
+        scanf("%s", p[i].name);
+        printf("Nhap arrival time: ", i + 1);
+        scanf("%d", &p[i].arrival_time);
+        printf("Nhap burst time: ", i + 1);
+        scanf("%d", &p[i].burst_time);
+        printf("--------------\n");
+        p[i].is_completed = 0; // 0 la false
+    }
 
     int current_time = 0;
     int completed = 0;
@@ -46,15 +34,14 @@ int main() {
 
     while (completed != n) {
         int min_index = -1;
-        int min_bt = INT_MAX;
+        int min_bt = 999999;
 
         for (int i = 0; i < n; i++) {
-            if (p[i].arrival_time <= current_time && !p[i].is_completed) {
+            if (p[i].arrival_time <= current_time && p[i].is_completed == 0) {
                 if (p[i].burst_time < min_bt) {
                     min_bt = p[i].burst_time;
                     min_index = i;
-                }
-                else if (p[i].burst_time == min_bt) {
+                } else if (p[i].burst_time == min_bt) {
                     if (p[i].arrival_time < p[min_index].arrival_time) {
                         min_index = i;
                     }
@@ -66,10 +53,9 @@ int main() {
             p[min_index].response_time = current_time - p[min_index].arrival_time;
             p[min_index].waiting_time = current_time - p[min_index].arrival_time;
             current_time += p[min_index].burst_time;
-            p[min_index].completion_time = current_time;
-            p[min_index].turnaround_time = p[min_index].completion_time - p[min_index].arrival_time;
-            p[min_index].is_completed = true;
-            
+            p[min_index].turnaround_time = current_time - p[min_index].arrival_time;
+            p[min_index].is_completed = 1;
+
             total_wt += p[min_index].waiting_time;
             total_tat += p[min_index].turnaround_time;
             completed++;
@@ -78,6 +64,7 @@ int main() {
         }
     }
 
+    // In ket qua
     printf("\n-------------------------------------------------------------------------\n");
     printf("%-10s %-15s %-15s %-15s\n", "Name", "Response Time", "Waiting Time", "Turnaround Time");
     printf("-------------------------------------------------------------------------\n");
