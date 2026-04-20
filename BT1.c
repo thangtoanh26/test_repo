@@ -49,13 +49,13 @@ int main() {
         int min_bt = INT_MAX;
 
         for (int i = 0; i < n; i++) {
-            if (p[i].at <= current_time && !p[i].is_completed) {
-                if (p[i].bt < min_bt) {
-                    min_bt = p[i].bt;
+            if (p[i].arrival_time <= current_time && !p[i].is_completed) {
+                if (p[i].burst_time < min_bt) {
+                    min_bt = p[i].burst_time;
                     min_index = i;
                 }
-                else if (p[i].bt == min_bt) {
-                    if (p[i].at < p[min_index].at) {
+                else if (p[i].burst_time == min_bt) {
+                    if (p[i].arrival_time < p[min_index].arrival_time) {
                         min_index = i;
                     }
                 }
@@ -63,15 +63,15 @@ int main() {
         }
 
         if (min_index != -1) {
-            p[min_index].rt = current_time - p[min_index].at;
-            p[min_index].wt = current_time - p[min_index].at;
-            current_time += p[min_index].bt;
-            p[min_index].ct = current_time;
-            p[min_index].tat = p[min_index].ct - p[min_index].at;
+            p[min_index].response_time = current_time - p[min_index].arrival_time;
+            p[min_index].waiting_time = current_time - p[min_index].arrival_time;
+            current_time += p[min_index].burst_time;
+            p[min_index].completion_time = current_time;
+            p[min_index].turnaround_time = p[min_index].completion_time - p[min_index].arrival_time;
             p[min_index].is_completed = true;
             
-            total_wt += p[min_index].wt;
-            total_tat += p[min_index].tat;
+            total_wt += p[min_index].waiting_time;
+            total_tat += p[min_index].turnaround_time;
             completed++;
         } else {
             current_time++;
@@ -82,7 +82,7 @@ int main() {
     printf("%-10s %-15s %-15s %-15s\n", "Name", "Response Time", "Waiting Time", "Turnaround Time");
     printf("-------------------------------------------------------------------------\n");
     for (int i = 0; i < n; i++) {
-        printf("%-10s %-15d %-15d %-15d\n", p[i].name, p[i].rt, p[i].wt, p[i].tat);
+        printf("%-10s %-15d %-15d %-15d\n", p[i].name, p[i].response_time, p[i].waiting_time, p[i].turnaround_time);
     }
     printf("-------------------------------------------------------------------------\n");
     printf("Average Waiting Time: %.2f\n", total_wt / n);
