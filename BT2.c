@@ -1,3 +1,10 @@
+/*###################################### 
+# University of Information Technology # 
+# IT007 Operating System               #
+# To Anh Thang, 24521613               # 
+# File: srt.c                          # 
+######################################*/
+
 #include <stdio.h>
 
 struct Process {
@@ -5,9 +12,10 @@ struct Process {
     int arrival_time;
     int burst_time;
     int remaining_burst_time;
-    int response_time;
-    int waiting_time;
+    int completion_time;
     int turnaround_time;
+    int waiting_time;
+    int response_time;
     int is_started;
 };
 
@@ -15,7 +23,6 @@ int main() {
     int n;
     printf("Nhap so luong process: ");
     scanf("%d", &n);
-    printf("--------------------\n");
 
     struct Process p[100];
     for (int i = 0; i < n; i++) {
@@ -59,7 +66,9 @@ int main() {
 
             if (p[min_index].remaining_burst_time == 0) {
                 completed++;
-                p[min_index].turnaround_time = current_time - p[min_index].arrival_time;
+                p[min_index].completion_time = current_time;
+                p[min_index].turnaround_time = 
+                        p[min_index].completion_time - p[min_index].arrival_time;
                 p[min_index].waiting_time = p[min_index].turnaround_time - p[min_index].burst_time;
 
                 total_wt += p[min_index].waiting_time;
