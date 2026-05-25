@@ -5,7 +5,7 @@
 #include <semaphore.h>
 #include <pthread.h>
 
-int MSSV = 23 // MSSV = 24521613
+int MSSV = 23; // MSSV = 24521613
 
 int sells, products;
 sem_t sem;
@@ -22,14 +22,14 @@ void* sell(void* arg) {
     return NULL;
 }
 
-void produce() {
+void* produce(void* arg) {
     while (1) {
         if (products > sells + MSSV) {
             break;
         }
-        sem_wait(&sem);
         products++;
         printf("Products: %d\n", products);
+        sem_post(&sem);
     }
     return NULL;
 }
@@ -39,6 +39,7 @@ int main() {
     sem_init(&sem, 0, 1);
     pthread_create(&sell_thread, NULL, sell, NULL);
     pthread_create(&produce_thread, NULL, produce, NULL);
+    
     sells = 0;
     products = 0;
 
